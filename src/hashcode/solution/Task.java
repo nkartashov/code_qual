@@ -1,5 +1,6 @@
 package hashcode.solution;
 
+import hashcode.output.DeliverAction;
 import hashcode.output.IAction;
 
 import java.util.ArrayList;
@@ -38,9 +39,14 @@ public class Task {
         Order order = orders.get(orderId);
         Drone drone = drones.get(droneId);
         int time = order.timeToFly(drone);
+
         drone.getItems().put(productTypeId, drone.getItems().get(productTypeId) - itemsToDeliver);
         drone.moveTime(time + 1);
+        drone.setLocation(order);
+        actions.add(new DeliverAction(droneId, orderId, productTypeId, itemsToDeliver));
     }
+
+    
 
     public void load(int droneID, int wareHouseID, int itemType, int itemWeight){
         Drone drone = drones.get(droneID);
