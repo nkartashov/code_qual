@@ -3,6 +3,7 @@ package hashcode.solution;
 import hashcode.output.IAction;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -30,5 +31,6 @@ public class Task {
         this.itemWeights = itemWeights;
         this.warehouses = warehouses;
         this.orders = orders;
+        Collections.sort(this.orders);
     }
 }

@@ -1,5 +1,7 @@
 package hashcode.solution;
 
+import hashcode.Main;
+
 /**
  * Created by nikitakart on 11/02/16.
  */
@@ -18,5 +20,14 @@ public class Located {
     public Located(int row, int column) {
         m_row = row;
         m_column = column;
+    }
+
+    public double distance(Located other) {
+        return Math.sqrt(Math.pow(m_row - other.m_row, 2) + Math.pow(m_column - other.m_column, 2));
+    }
+
+    public int timeToFly(Located other) {
+        double dist = distance(other);
+        return (int) Math.ceil(dist);
     }
 }
