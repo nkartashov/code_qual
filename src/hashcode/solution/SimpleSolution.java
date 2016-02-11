@@ -21,6 +21,8 @@ public class SimpleSolution implements ISolution {
                 Warehouse w = getWireHouseWithItem(warehouses, type, value);
                 if (w.itemsOfTypeLast(type) > value) {
 
+
+
                 }
             }
             Warehouse warehouse = getWireHouseWithItem(warehouses, order.)
