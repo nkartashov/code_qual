@@ -14,6 +14,7 @@ public class Order extends Located implements Comparable<Order> {
     }
 
     private Map<Integer, Integer> orderedItems;
+    private int delivered;
 
     private final double locality;
 
@@ -26,6 +27,15 @@ public class Order extends Located implements Comparable<Order> {
             maxItems = Math.max(maxItems, items);
         }
         locality = maxItems / totalItems;
+    }
+
+    public void deliver(int type, int count) {
+        orderedItems.put(type, orderedItems.get(type) - count);
+        delivered += count;
+    }
+
+    public boolean isFullFilled() {
+        return delivered == totalItems;
     }
 
     @Override

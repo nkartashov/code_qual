@@ -31,4 +31,8 @@ public class Drone extends Located {
     public void moveTime(int time) {
         this.time += time;
     }
+
+    public void deliver(int type, int count) {
+        items.put(type, items.get(type) - count);
+    }
 }
