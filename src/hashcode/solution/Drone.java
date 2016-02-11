@@ -43,7 +43,7 @@ public class Drone extends Located {
     }
 
     public void load(int type, int count) {
-        items.put(type, items.get(type) + count);
+        items.put(type, items.getOrDefault(type, 0) + count);
         currentLoad += count * task.itemWeights.get(type);
     }
 
