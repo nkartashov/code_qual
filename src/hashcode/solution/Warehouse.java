@@ -20,10 +20,10 @@ public class Warehouse extends Located {
     }
 
     public void updateState(int time, int type, int count) {
-        Map.Entry<Integer, WarehouseState> entry = states.floorEntry(time);
-        if (entry == null) {
-
-        }
+        WarehouseState lastState = states.lastEntry().getValue();
+        List<Integer> copiedState = lastState.copy();
+        copiedState.set(type, copiedState.get(type) + count);
+        states.put(time, new WarehouseState(copiedState));
     }
 
     public TreeMap<Integer, WarehouseState> getStates() {

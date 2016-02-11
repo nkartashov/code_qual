@@ -45,9 +45,9 @@ public class Task {
     public void deliver(int droneId, int orderId, int productTypeId, int itemsToDeliver) {
         Order order = orders.get(orderId);
         Drone drone = drones.get(droneId);
-        int time = order.timeToFly(drone);
+        int timeToCustomer = order.timeToFly(drone);
 
-        drone.moveTime(time + 1);
+        drone.moveTime(timeToCustomer + 1);
         drone.setLocation(order);
         drone.deliver(productTypeId, itemsToDeliver);
         order.deliver(productTypeId, itemsToDeliver);
@@ -62,11 +62,12 @@ public class Task {
     public void load(int droneID, int wareHouseID, int itemType, int numberOfItem){
         Drone drone = drones.get(droneID);
         Warehouse warehouse = warehouses.get(wareHouseID);
-        int distToWirehouse = drone.timeToFly(warehouse);
-        drone.moveTime(distToWirehouse);
+        int timeToWarehouse = drone.timeToFly(warehouse);
+
+        drone.moveTime(timeToWarehouse + 1);
         drone.setLocation(warehouse);
+        drone.load(itemType, numberOfItem);
+        warehouse.updateState(timeToWarehouse + 1, itemType, -numberOfItem);
         actions.add(new LoadAction(droneID, wareHouseID, itemType, numberOfItem));
-        // implement warehouse update
-        throw new UnsupportedOperationException();
     }
 }

@@ -9,10 +9,15 @@ public class Main {
 
     public static void main(String[] args) {
         for (String arg: args) {
-            InputReader reader = new InputReader(arg);
-            ISolution solution = new SimpleSolution(reader.readFile());
-            ResultPrinter resultPrinter = new ResultPrinter(arg + ".out");
-            resultPrinter.printResult(solution.solve());
+            try {
+                InputReader reader = new InputReader(arg);
+                ISolution solution = new SimpleSolution(reader.readFile());
+                ResultPrinter resultPrinter = new ResultPrinter(arg + ".out");
+                resultPrinter.printResult(solution.solve());
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+                System.out.println(ex.getStackTrace());
+            }
         }
     }
 }
