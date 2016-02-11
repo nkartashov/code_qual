@@ -36,6 +36,10 @@ public class Task {
         this.itemWeights = itemWeights;
         this.warehouses = warehouses;
         this.orders = orders;
+        this.drones = new ArrayList<>();
+        for (int i = 0; i < dronesCount; i++) {
+            this.drones.add(new Drone(warehouses.get(0).m_row, warehouses.get(0).m_column));
+        }
     }
 
     public void deliver(int droneId, int orderId, int productTypeId, int itemsToDeliver) {
@@ -55,25 +59,14 @@ public class Task {
         actions.add(new WaitAction(droneId, time));
     }
 
-    public LoadAction load(int droneID, int wareHouseID, int itemType, int numberOfItem){
+    public void load(int droneID, int wareHouseID, int itemType, int numberOfItem){
         Drone drone = drones.get(droneID);
         Warehouse warehouse = warehouses.get(wareHouseID);
         int distToWirehouse = drone.timeToFly(warehouse);
         drone.moveTime(distToWirehouse);
         drone.setLocation(warehouse);
-
-        TreeMap<Integer, WarehouseState> allStates = warehouse.getStates();
-        if (allStates.containsKey(drone.getTime())) {
-            if (allStates.containsKey(drone.getTime() + 1))
-                throw new UnsupportedOperationException();
-
-            WarehouseState state = allStates.get(drone.getTime());
-            int thisItemCount = state.getItemsByType().get(itemType);
-
-
-
-        }
-
-        return new LoadAction(droneID, wareHouseID, itemType, numberOfItem);
+        actions.add(new LoadAction(droneID, wareHouseID, itemType, numberOfItem));
+        // implement warehouse update
+        throw new UnsupportedOperationException();
     }
 }

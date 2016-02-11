@@ -1,6 +1,7 @@
 package hashcode.solution;
 
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -16,6 +17,13 @@ public class Warehouse extends Located {
 
     public int itemsOfTypeLast(int type) {
         return states.lastEntry().getValue().getItemsByType().get(type);
+    }
+
+    public void updateState(int time, int type, int count) {
+        Map.Entry<Integer, WarehouseState> entry = states.floorEntry(time);
+        if (entry == null) {
+
+        }
     }
 
     public TreeMap<Integer, WarehouseState> getStates() {
