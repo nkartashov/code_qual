@@ -31,6 +31,8 @@ public class Task {
         this.itemWeights = itemWeights;
         this.warehouses = warehouses;
         this.orders = orders;
-        Collections.sort(this.orders);
+    }
+
+    public void deliver(int droneId, int orderId, int productTypeId, int itemsToDeliver) {
     }
 }
