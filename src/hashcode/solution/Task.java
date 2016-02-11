@@ -18,6 +18,7 @@ public class Task {
     public final List<Integer> itemWeights;
     public List<Warehouse> warehouses;
     public List<Order> orders;
+    public List<Drone> drones;
 
     public List<IAction> actions = new ArrayList<>();
 
@@ -32,5 +33,11 @@ public class Task {
         this.warehouses = warehouses;
         this.orders = orders;
         Collections.sort(this.orders);
+    }
+
+    public void load(int droneID, int wareHouseID, int itemType, int itemWeight){
+        Drone drone = drones.get(droneID);
+        Warehouse warehouse = warehouses.get(wareHouseID);
+        int distToWirehouse = drone.getLocated().timeToFly(warehouse);
     }
 }
