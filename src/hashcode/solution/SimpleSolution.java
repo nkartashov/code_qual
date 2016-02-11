@@ -32,6 +32,9 @@ public class SimpleSolution implements ISolution {
                     task.deliver(droneId, orderId, type, countToDeliver);
                     count -= countToDeliver;
                     left -= countToDeliver;
+                    if (count == 0) {
+                        return true;
+                    }
                     if (left == 0) {
                         break;
                     }
