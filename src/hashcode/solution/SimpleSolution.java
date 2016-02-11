@@ -21,7 +21,7 @@ public class SimpleSolution implements ISolution {
                 Drone drone = task.drones.get(droneId);
                 int maxItems = drone.maxOfType(type);
                 if (maxItems > 0) {
-                    int countToDeliver = Math.min(count, maxItems);
+                    int countToDeliver = Math.min(left, Math.min(count, maxItems));
                     if (drone.getTime() >= task.deadline) {
                         return false;
                     }
