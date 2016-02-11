@@ -2,11 +2,13 @@ package hashcode.solution;
 
 import hashcode.output.DeliverAction;
 import hashcode.output.IAction;
+import hashcode.output.LoadAction;
 import hashcode.output.WaitAction;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * Created by nikitakart on 11/02/16.
@@ -53,9 +55,23 @@ public class Task {
         actions.add(new WaitAction(droneId, time));
     }
 
-    public void load(int droneID, int wareHouseID, int itemType, int itemWeight){
+    public LoadAction load(int droneID, int wareHouseID, int itemType, int numberOfItem){
         Drone drone = drones.get(droneID);
         Warehouse warehouse = warehouses.get(wareHouseID);
-        int distToWirehouse = drone.getLocated().timeToFly(warehouse);
+        int distToWirehouse = drone.timeToFly(warehouse);
+        drone.moveTime(distToWirehouse);
+        drone.setLocation(warehouse);
+
+        TreeMap<Integer, WarehouseState> allStates = warehouse.getStates();
+        if (allStates.containsKey(drone.getTime())) {
+            if (allStates.containsKey(drone.getTime() + 1))
+                throw new UnsupportedOperationException();
+
+            WarehouseState state = allStates.get(drone.getTime());
+            int thisItemCount = state.getItemsByType().get(itemType);
+
+        }
+
+        return new LoadAction(droneID, wareHouseID, itemType, numberOfItem);
     }
 }
