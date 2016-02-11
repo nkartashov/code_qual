@@ -48,6 +48,6 @@ public class Drone extends Located {
     }
 
     public int maxOfType(int type) {
-        return (int) Math.floor(task.maxLoad - currentLoad / task.itemWeights.get(type));
+        return (int) Math.floor((task.maxLoad - currentLoad) / task.itemWeights.get(type));
     }
 }

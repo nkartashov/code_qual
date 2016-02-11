@@ -23,7 +23,7 @@ public class SimpleSolution implements ISolution {
                 int left = warehouse.itemsOfTypeLast(type);
                 int maxItems = drone.maxOfType(type);
                 if (maxItems > 0) {
-                    int countToDeliver = Math.min(count, maxItems);
+                    int countToDeliver = Math.min(left, Math.min(count, maxItems));
                     if (drone.getTime() >= task.deadline) {
                         return false;
                     }
@@ -34,6 +34,9 @@ public class SimpleSolution implements ISolution {
                     task.deliver(droneId, orderId, type, countToDeliver);
                     count -= countToDeliver;
                     left -= countToDeliver;
+                    if (count == 0) {
+                        return true;
+                    }
                     if (left == 0) {
                         break;
                     }
