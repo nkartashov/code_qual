@@ -70,6 +70,8 @@ public class Task {
             WarehouseState state = allStates.get(drone.getTime());
             int thisItemCount = state.getItemsByType().get(itemType);
 
+
+
         }
 
         return new LoadAction(droneID, wareHouseID, itemType, numberOfItem);
