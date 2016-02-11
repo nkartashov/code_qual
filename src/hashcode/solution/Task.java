@@ -38,7 +38,7 @@ public class Task {
         this.orders = orders;
         this.drones = new ArrayList<>();
         for (int i = 0; i < dronesCount; i++) {
-            this.drones.add(new Drone(warehouses.get(0).m_row, warehouses.get(0).m_column));
+            this.drones.add(new Drone(warehouses.get(0).m_row, warehouses.get(0).m_column, this));
         }
     }
 

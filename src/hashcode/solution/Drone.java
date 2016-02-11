@@ -10,8 +10,13 @@ import java.util.Map;
 public class Drone extends Located {
     private final Map<Integer, Integer> items = new HashMap<>(); // type, count
 
-    public Drone(int row, int column) {
+    private int currentLoad;
+    private Task task;
+
+    public Drone(int row, int column, Task task) {
         super(row, column);
+        currentLoad = 0;
+        this.task = task;
     }
 
     private int time;
@@ -34,9 +39,15 @@ public class Drone extends Located {
 
     public void deliver(int type, int count) {
         items.put(type, items.get(type) - count);
+        currentLoad -= count * task.itemWeights.get(type);
     }
 
     public void load(int type, int count) {
         items.put(type, items.get(type) + count);
+        currentLoad += count * task.itemWeights.get(type);
+    }
+
+    public int maxOfType(int type) {
+        return (int) Math.floor(task.maxLoad - currentLoad / task.itemWeights.get(type));
     }
 }
