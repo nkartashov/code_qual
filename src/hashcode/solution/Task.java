@@ -36,14 +36,18 @@ public class Task {
         this.itemWeights = itemWeights;
         this.warehouses = warehouses;
         this.orders = orders;
+        this.drones = new ArrayList<>();
+        for (int i = 0; i < dronesCount; i++) {
+            this.drones.add(new Drone(warehouses.get(0).m_row, warehouses.get(0).m_column));
+        }
     }
 
     public void deliver(int droneId, int orderId, int productTypeId, int itemsToDeliver) {
         Order order = orders.get(orderId);
         Drone drone = drones.get(droneId);
-        int time = order.timeToFly(drone);
+        int timeToCustomer = order.timeToFly(drone);
 
-        drone.moveTime(time + 1);
+        drone.moveTime(timeToCustomer + 1);
         drone.setLocation(order);
         drone.deliver(productTypeId, itemsToDeliver);
         order.deliver(productTypeId, itemsToDeliver);
@@ -55,25 +59,15 @@ public class Task {
         actions.add(new WaitAction(droneId, time));
     }
 
-    public LoadAction load(int droneID, int wareHouseID, int itemType, int numberOfItem){
+    public void load(int droneID, int wareHouseID, int itemType, int numberOfItem){
         Drone drone = drones.get(droneID);
         Warehouse warehouse = warehouses.get(wareHouseID);
-        int distToWirehouse = drone.timeToFly(warehouse);
-        drone.moveTime(distToWirehouse);
+        int timeToWarehouse = drone.timeToFly(warehouse);
+
+        drone.moveTime(timeToWarehouse + 1);
         drone.setLocation(warehouse);
-
-        TreeMap<Integer, WarehouseState> allStates = warehouse.getStates();
-        if (allStates.containsKey(drone.getTime())) {
-            if (allStates.containsKey(drone.getTime() + 1))
-                throw new UnsupportedOperationException();
-
-            WarehouseState state = allStates.get(drone.getTime());
-            int thisItemCount = state.getItemsByType().get(itemType);
-
-
-
-        }
-
-        return new LoadAction(droneID, wareHouseID, itemType, numberOfItem);
+        drone.load(itemType, numberOfItem);
+        warehouse.updateState(timeToWarehouse + 1, itemType, -numberOfItem);
+        actions.add(new LoadAction(droneID, wareHouseID, itemType, numberOfItem));
     }
 }
