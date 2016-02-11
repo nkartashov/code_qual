@@ -2,6 +2,7 @@ package hashcode.solution;
 
 import hashcode.output.IAction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,6 +17,6 @@ public class SimpleSolution implements ISolution {
 
     @Override
     public List<IAction> solve() {
-        return null;
+        return task.actions;
     }
 }

@@ -1,5 +1,8 @@
 package hashcode.solution;
 
+import hashcode.output.IAction;
+
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -15,7 +18,7 @@ public class Task {
     public List<Warehouse> warehouses;
     public List<Order> orders;
 
-
+    public List<IAction> actions = new ArrayList<>();
 
     public Task(int rows, int columns, int dronesCount, int deadline, int maxLoad, List<Integer> itemWeights,
                 List<Warehouse> warehouses, List<Order> orders) {
