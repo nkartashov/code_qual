@@ -13,6 +13,7 @@ public class Drone {
 
     public Drone(Located located) {
         this.located = located;
+
     }
 
     private int stepsFromBegin;
