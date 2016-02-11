@@ -35,6 +35,11 @@ public class Task {
     }
 
     public void deliver(int droneId, int orderId, int productTypeId, int itemsToDeliver) {
+        Order order = orders.get(orderId);
+        Drone drone = drones.get(droneId);
+        int time = order.timeToFly(drone);
+        drone.getItems().put(productTypeId, drone.getItems().get(productTypeId) - itemsToDeliver);
+        drone.moveTime(time + 1);
     }
 
     public void load(int droneID, int wareHouseID, int itemType, int itemWeight){

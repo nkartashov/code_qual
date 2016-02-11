@@ -27,4 +27,8 @@ public class Drone extends Located {
     public void setTime(int time) {
         this.time = time;
     }
+
+    public void moveTime(int time) {
+        this.time += time;
+    }
 }
