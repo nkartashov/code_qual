@@ -30,4 +30,8 @@ public class Located {
         double dist = distance(other);
         return (int) Math.ceil(dist);
     }
+    public void setLocation(Located location){
+        m_row = location.m_row;
+        m_column = location.m_column;
+    }
 }
