@@ -13,12 +13,14 @@ public class SimpleSolution implements ISolution {
 
     private boolean deliverItemWhere(int orderId, int type, int count) {
         while (count != 0) {
-            int warehouseId = getWarehouseWithItem(type, count);
-            Warehouse warehouse = task.warehouses.get(warehouseId);
-            int droneId = getDroneId();
             while (true) {
-                int left = warehouse.itemsOfTypeLast(type);
+                int droneId = getDroneId();
                 Drone drone = task.drones.get(droneId);
+                int warehouseId = getNearestWarehiuse(type, count, drone);
+                Warehouse warehouse = task.warehouses.get(warehouseId);
+
+
+                int left = warehouse.itemsOfTypeLast(type);
                 int maxItems = drone.maxOfType(type);
                 if (maxItems > 0) {
                     int countToDeliver = Math.min(count, maxItems);
@@ -71,12 +73,45 @@ public class SimpleSolution implements ISolution {
         return maxWarehouseId; //not full
     }
 
+    int getNearestWarehiuse(int type, int count, Drone drone) {
+        int max = -1;
+        int maxWarehouseId = -1;
+        int dist = Integer.MAX_VALUE;
+        Map<Integer, Integer> distMap = new HashMap<>();
+        for (int warehouseId = 0; warehouseId < task.warehouses.size(); warehouseId++) {
+            Warehouse warehouse = task.warehouses.get(warehouseId);
+            int realDist = warehouse.timeToFly(drone);
+            if (warehouse.itemsOfTypeLast(type) > max) {
+                max = warehouse.itemsOfTypeLast(type);
+                maxWarehouseId = warehouseId;
+            }
+            if (warehouse.itemsOfTypeLast(type) == count) {
+                distMap.put(realDist, warehouseId);
+            }
+        }
+
+        if (!distMap.isEmpty()) {
+            int min = Integer.MAX_VALUE;
+            int result = 0;
+            for (Map.Entry<Integer, Integer> entry : distMap.entrySet()) {
+                int key = entry.getKey();
+                int value = entry.getValue();
+                if (key < min) {
+                    result = value;
+                }
+            }
+            return result;
+        }
+
+        return maxWarehouseId; //not full
+    }
+
     @Override
     public List<IAction> solve() {
         for (int orderId = 0; orderId < task.orders.size(); orderId++) {
             Order order = task.orders.get(orderId);
             Map<Integer, Integer> items = order.getOrderedItems();
-            for (Map.Entry<Integer, Integer> item: items.entrySet()) {
+            for (Map.Entry<Integer, Integer> item : items.entrySet()) {
                 if (!deliverItemWhere(orderId, item.getKey(), item.getValue())) {
                     return task.actions;
                 }
