@@ -11,7 +11,7 @@ public class SimpleSolution implements ISolution {
     private Task task;
     private Queue<Integer> droneQueue = new LinkedList<>();
 
-    private void deliverItemWhere(int orderId, int type, int count) {
+    private boolean deliverItemWhere(int orderId, int type, int count) {
         while (count != 0) {
             int warehouseId = getWarehouseWithItem(type, count);
             Warehouse warehouse = task.warehouses.get(warehouseId);
@@ -22,7 +22,13 @@ public class SimpleSolution implements ISolution {
                 int maxItems = drone.maxOfType(type);
                 if (maxItems > 0) {
                     int countToDeliver = Math.min(count, maxItems);
+                    if (drone.getTime() >= task.deadline) {
+                        return false;
+                    }
                     task.load(droneId, warehouseId, type, countToDeliver);
+                    if (drone.getTime() >= task.deadline) {
+                        return false;
+                    }
                     task.deliver(droneId, orderId, type, countToDeliver);
                     count -= countToDeliver;
                     left -= countToDeliver;
@@ -32,6 +38,7 @@ public class SimpleSolution implements ISolution {
                 }
             }
         }
+        return true;
     }
 
     private int getDroneId() {
@@ -70,7 +77,9 @@ public class SimpleSolution implements ISolution {
             Order order = task.orders.get(orderId);
             Map<Integer, Integer> items = order.getOrderedItems();
             for (Map.Entry<Integer, Integer> item: items.entrySet()) {
-                deliverItemWhere(orderId, item.getKey(), item.getValue());
+                if (!deliverItemWhere(orderId, item.getKey(), item.getValue())) {
+                    return task.actions;
+                }
             }
         }
         return task.actions;

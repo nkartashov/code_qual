@@ -56,7 +56,7 @@ public class InputReader {
                 Map<Integer, Integer> orderedItems = new HashMap<>();
                 for (String item: inputStream.readLine().split(" ")) {
                     Integer iitem = Integer.parseInt(item);
-                    orderedItems.put(iitem, orderedItems.getOrDefault(iitem, 0));
+                    orderedItems.put(iitem, orderedItems.getOrDefault(iitem, 0) + 1);
                 }
                 orders.add(new Order(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), totalItems, orderedItems));
             }
