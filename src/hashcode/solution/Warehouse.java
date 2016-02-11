@@ -19,9 +19,14 @@ public class Warehouse extends Located {
         return states.lastEntry().getValue().getItemsByType().get(type);
     }
 
+    public int lastTime() {
+        return states.lastKey();
+    }
+
     public void updateState(int time, int type, int count) {
         WarehouseState lastState = states.lastEntry().getValue();
         List<Integer> copiedState = lastState.copy();
+        assert copiedState.get(type) + count >= 0;
         copiedState.set(type, copiedState.get(type) + count);
         states.put(time, new WarehouseState(copiedState));
     }

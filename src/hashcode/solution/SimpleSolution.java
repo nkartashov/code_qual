@@ -15,13 +15,16 @@ public class SimpleSolution implements ISolution {
         while (count != 0) {
             int warehouseId = getWarehouseWithItem(type, count);
             Warehouse warehouse = task.warehouses.get(warehouseId);
-            int droneId = getDroneId();
+            int left = warehouse.itemsOfTypeLast(type);
             while (true) {
-                int left = warehouse.itemsOfTypeLast(type);
+                int droneId = getDroneId();
                 Drone drone = task.drones.get(droneId);
                 int maxItems = drone.maxOfType(type);
                 if (maxItems > 0) {
                     int countToDeliver = Math.min(left, Math.min(count, maxItems));
+                    if (drone.getTime() < warehouse.lastTime()) {
+                        task.wait(droneId, warehouse.lastTime() - drone.getTime());
+                    }
                     if (drone.getTime() >= task.deadline) {
                         return false;
                     }
