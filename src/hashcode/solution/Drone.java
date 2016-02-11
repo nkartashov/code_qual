@@ -16,7 +16,7 @@ public class Drone {
 
     }
 
-    private int stepsFromBegin;
+    private int time;
 
     public Located getLocated() {
         return located;
@@ -26,11 +26,11 @@ public class Drone {
         return items;
     }
 
-    public int getStepsFromBegin() {
-        return stepsFromBegin;
+    public int getTime() {
+        return time;
     }
 
-    public void setStepsFromBegin(int stepsFromBegin) {
-        this.stepsFromBegin = stepsFromBegin;
+    public void setTime(int time) {
+        this.time = time;
     }
 }
