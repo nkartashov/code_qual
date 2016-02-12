@@ -6,6 +6,8 @@ import hashcode.output.LoadAction;
 import hashcode.output.WaitAction;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -39,32 +41,32 @@ public class Task {
         }
     }
 
-    public void deliver(int droneId, int orderId, int productTypeId, int itemsToDeliver) throws DeadlineHit {
-        Order order = orders.get(orderId);
-        Drone drone = drones.get(droneId);
+    public void deliver(Drone drone, Order order, int type, int count) throws DeadlineHit {
         int timeToCustomer = order.timeToFly(drone);
 
         drone.moveTime(timeToCustomer + 1);
         drone.setLocation(order);
-        drone.deliver(productTypeId, itemsToDeliver);
-        order.deliver(productTypeId, itemsToDeliver);
-        actions.add(new DeliverAction(droneId, orderId, productTypeId, itemsToDeliver));
+        drone.deliver(type, count);
+        order.deliver(type, count);
+        actions.add(new DeliverAction(drone.id, order.id, type, count));
     }
 
-    public void wait(int droneId, int time) throws DeadlineHit {
-        drones.get(droneId).moveTime(time);
-        actions.add(new WaitAction(droneId, time));
+    public void wait(Drone drone, int time) throws DeadlineHit {
+        drone.moveTime(time);
+        actions.add(new WaitAction(drone.id, time));
     }
 
-    public void load(int droneID, int wareHouseID, int itemType, int numberOfItem) throws DeadlineHit {
-        Drone drone = drones.get(droneID);
-        Warehouse warehouse = warehouses.get(wareHouseID);
+    public void load(Drone drone, Warehouse warehouse, int type, int count) throws DeadlineHit {
         int timeToWarehouse = drone.timeToFly(warehouse);
 
         drone.moveTime(timeToWarehouse + 1);
         drone.setLocation(warehouse);
-        drone.load(itemType, numberOfItem);
-        warehouse.updateState(itemType, -numberOfItem);
-        actions.add(new LoadAction(droneID, wareHouseID, itemType, numberOfItem));
+        drone.load(type, count);
+        warehouse.updateState(type, -count);
+        actions.add(new LoadAction(drone.id, warehouse.id, type, count));
+    }
+
+    public Drone getClosest(Warehouse warehouse) {
+        return Collections.min(drones, (o1, o2) -> o1.timeTo(warehouse) - o2.timeTo(warehouse));
     }
 }

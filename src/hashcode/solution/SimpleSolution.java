@@ -11,31 +11,29 @@ public class SimpleSolution implements ISolution {
     private Task task;
     private Queue<Integer> droneQueue = new LinkedList<>();
 
-    private void deliverItemWhere(int orderId, int type, int count) throws DeadlineHit {
+    private void deliverItemWhere(Order order, int type, int count) throws DeadlineHit {
         while (count != 0) {
-            int warehouseId = getWarehouseWithItem(type, count);
-            Warehouse warehouse = task.warehouses.get(warehouseId);
+            Warehouse warehouse = getWarehouseWithItem(type, count);
             int maxStored = warehouse.itemsForType(type);
             int toDeliver = Math.min(maxStored, count);
-            deliverGoodsFromWarehouse(orderId, warehouseId, type, toDeliver);
+            deliverGoodsFromWarehouse(order, warehouse, type, toDeliver);
             count -= toDeliver;
         }
     }
 
-    private void deliverGoodsFromWarehouse(int orderId, int warehouseId, int type, int count) throws DeadlineHit {
-        int droneId = getDroneId();
+    private void deliverGoodsFromWarehouse(Order order, Warehouse warehouse, int type, int count) throws DeadlineHit {
         while (count != 0) {
-            Drone drone = task.drones.get(droneId);
+            Drone drone = task.getClosest(warehouse);
             int maxCapacity = drone.maxOfType(type);
             int toDeliver = Math.min(maxCapacity, count);
-            deliverGoodsFromWarehouseByDrone(orderId, warehouseId, droneId, type, toDeliver);
+            deliverGoodsFromWarehouseByDrone(order, warehouse, drone, type, toDeliver);
             count -= toDeliver;
         }
     }
 
-    private void deliverGoodsFromWarehouseByDrone(int orderId, int warehouseId, int droneId, int type, int count) throws DeadlineHit {
-        task.load(droneId, warehouseId, type, count);
-        task.deliver(droneId, orderId, type, count);
+    private void deliverGoodsFromWarehouseByDrone(Order order, Warehouse warehouse, Drone drone, int type, int count) throws DeadlineHit {
+        task.load(drone, warehouse, type, count);
+        task.deliver(drone, order, type, count);
     }
 
     private int getDroneId() {
@@ -52,30 +50,35 @@ public class SimpleSolution implements ISolution {
         }
     }
 
-    int getWarehouseWithItem(int type, int count) {
+    Warehouse getWarehouseWithItem(int type, int count) {
         int max = -1;
-        int maxWarehouseId = -1;
-        for (int warehouseId = 0; warehouseId < task.warehouses.size(); warehouseId++) {
-            Warehouse warehouse = task.warehouses.get(warehouseId);
+        Warehouse bestWarehouse = null;
+        for (Warehouse warehouse: task.warehouses) {
             if (warehouse.itemsForType(type) > max) {
                 max = warehouse.itemsForType(type);
-                maxWarehouseId = warehouseId;
+                bestWarehouse = warehouse;
             }
             if (warehouse.itemsForType(type) >= count)
-                return warehouseId;
+                return bestWarehouse;
         }
 
-        return maxWarehouseId; //not full
+        return bestWarehouse; //not full
     }
 
     @Override
     public List<IAction> solve() {
         try {
-            Collections.sort(task.orders);
+            Collections.sort(task.orders, (o1, o2) -> {
+                if (o1.totalItems == o2.totalItems) {
+                    return (int) Math.round(o2.locality - o1.locality);
+                } else {
+                    return o1.totalItems - o2.totalItems;
+                }
+            });
             for (Order order: task.orders) {
                 Map<Integer, Integer> items = order.getOrderedItems();
                 for (Map.Entry<Integer, Integer> item : items.entrySet()) {
-                    deliverItemWhere(order.id, item.getKey(), item.getValue());
+                    deliverItemWhere(order, item.getKey(), item.getValue());
                 }
             }
         } catch (DeadlineHit ex) {

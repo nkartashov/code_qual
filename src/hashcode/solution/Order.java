@@ -8,9 +8,9 @@ import java.util.Map;
  */
 public class Order extends Located implements Comparable<Order> {
     private final Map<Integer, Integer> orderedItems;
-    private final int totalItems;
+    public final int totalItems;
     private int delivered;
-    private final double locality;
+    public final double locality;
 
     public Map<Integer, Integer> getOrderedItems() {
         return orderedItems;
