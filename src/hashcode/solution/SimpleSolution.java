@@ -11,40 +11,31 @@ public class SimpleSolution implements ISolution {
     private Task task;
     private Queue<Integer> droneQueue = new LinkedList<>();
 
-    private boolean deliverItemWhere(int orderId, int type, int count) {
+    private void deliverItemWhere(int orderId, int type, int count) throws DeadlineHit {
         while (count != 0) {
             int warehouseId = getWarehouseWithItem(type, count);
             Warehouse warehouse = task.warehouses.get(warehouseId);
-            int left = warehouse.itemsOfTypeLast(type);
-            while (true) {
-                int droneId = getDroneId();
-                Drone drone = task.drones.get(droneId);
-                int maxItems = drone.maxOfType(type);
-                if (maxItems > 0) {
-                    int countToDeliver = Math.min(left, Math.min(count, maxItems));
-                    if (drone.getTime() < warehouse.lastTime()) {
-                        task.wait(droneId, warehouse.lastTime() - drone.getTime());
-                    }
-                    if (drone.getTime() >= task.deadline) {
-                        return false;
-                    }
-                    task.load(droneId, warehouseId, type, countToDeliver);
-                    if (drone.getTime() >= task.deadline) {
-                        return false;
-                    }
-                    task.deliver(droneId, orderId, type, countToDeliver);
-                    count -= countToDeliver;
-                    left -= countToDeliver;
-                    if (count == 0) {
-                        return true;
-                    }
-                    if (left == 0) {
-                        break;
-                    }
-                }
-            }
+            int maxStored = warehouse.itemsForType(type);
+            int toDeliver = Math.min(maxStored, count);
+            deliverGoodsFromWarehouse(orderId, warehouseId, type, toDeliver);
+            count -= toDeliver;
         }
-        return true;
+    }
+
+    private void deliverGoodsFromWarehouse(int orderId, int warehouseId, int type, int count) throws DeadlineHit {
+        int droneId = getDroneId();
+        while (count != 0) {
+            Drone drone = task.drones.get(droneId);
+            int maxCapacity = drone.maxOfType(type);
+            int toDeliver = Math.min(maxCapacity, count);
+            deliverGoodsFromWarehouseByDrone(orderId, warehouseId, droneId, type, toDeliver);
+            count -= toDeliver;
+        }
+    }
+
+    private void deliverGoodsFromWarehouseByDrone(int orderId, int warehouseId, int droneId, int type, int count) throws DeadlineHit {
+        task.load(droneId, warehouseId, type, count);
+        task.deliver(droneId, orderId, type, count);
     }
 
     private int getDroneId() {
@@ -66,11 +57,11 @@ public class SimpleSolution implements ISolution {
         int maxWarehouseId = -1;
         for (int warehouseId = 0; warehouseId < task.warehouses.size(); warehouseId++) {
             Warehouse warehouse = task.warehouses.get(warehouseId);
-            if (warehouse.itemsOfTypeLast(type) > max) {
-                max = warehouse.itemsOfTypeLast(type);
+            if (warehouse.itemsForType(type) > max) {
+                max = warehouse.itemsForType(type);
                 maxWarehouseId = warehouseId;
             }
-            if (warehouse.itemsOfTypeLast(type) == count)
+            if (warehouse.itemsForType(type) >= count)
                 return warehouseId;
         }
 
@@ -79,14 +70,16 @@ public class SimpleSolution implements ISolution {
 
     @Override
     public List<IAction> solve() {
-        for (int orderId = 0; orderId < task.orders.size(); orderId++) {
-            Order order = task.orders.get(orderId);
-            Map<Integer, Integer> items = order.getOrderedItems();
-            for (Map.Entry<Integer, Integer> item: items.entrySet()) {
-                if (!deliverItemWhere(orderId, item.getKey(), item.getValue())) {
-                    return task.actions;
+        try {
+            Collections.sort(task.orders);
+            for (Order order: task.orders) {
+                Map<Integer, Integer> items = order.getOrderedItems();
+                for (Map.Entry<Integer, Integer> item : items.entrySet()) {
+                    deliverItemWhere(order.id, item.getKey(), item.getValue());
                 }
             }
+        } catch (DeadlineHit ex) {
+            return task.actions;
         }
         return task.actions;
     }

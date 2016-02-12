@@ -8,30 +8,20 @@ import java.util.TreeMap;
  * Created by nikitakart on 11/02/16.
  */
 public class Warehouse extends Located {
-    private TreeMap<Integer, WarehouseState> states = new TreeMap<>();
+    private List<Integer> itemsByType;
 
-    public Warehouse(int row, int column, List<Integer> itemsByType) {
-        super(row, column);
-        states.put(0, new WarehouseState(itemsByType));
+    public Warehouse(int id, int row, int column, List<Integer> itemsByType) {
+        super(id, row, column);
+        this.itemsByType = itemsByType;
     }
 
-    public int itemsOfTypeLast(int type) {
-        return states.lastEntry().getValue().getItemsByType().get(type);
+    public int itemsForType(int type) {
+        return itemsByType.get(type);
     }
 
-    public int lastTime() {
-        return states.lastKey();
-    }
-
-    public void updateState(int time, int type, int count) {
-        WarehouseState lastState = states.lastEntry().getValue();
-        List<Integer> copiedState = lastState.copy();
-        assert copiedState.get(type) + count >= 0;
-        copiedState.set(type, copiedState.get(type) + count);
-        states.put(time, new WarehouseState(copiedState));
-    }
-
-    public TreeMap<Integer, WarehouseState> getStates() {
-        return states;
+    public void updateState(int type, int count) {
+        Integer previousValue = itemsByType.get(type);
+        assert previousValue + count >= 0;
+        itemsByType.set(type, previousValue + count);
     }
 }

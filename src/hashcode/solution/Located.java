@@ -1,37 +1,29 @@
 package hashcode.solution;
 
-import hashcode.Main;
-
 /**
  * Created by nikitakart on 11/02/16.
  */
-public class Located {
-    protected int m_row;
+public class Located extends IdObject {
+    protected int row;
+    protected int column;
 
-    public int getM_column() {
-        return m_column;
-    }
-
-    public int getM_row() {
-        return m_row;
-    }
-
-    protected int m_column;
-    public Located(int row, int column) {
-        m_row = row;
-        m_column = column;
+    public Located(int id, int row, int column) {
+        super(id);
+        this.row = row;
+        this.column = column;
     }
 
     public double distance(Located other) {
-        return Math.sqrt(Math.pow(m_row - other.m_row, 2) + Math.pow(m_column - other.m_column, 2));
+        return Math.sqrt(Math.pow(row - other.row, 2) + Math.pow(column - other.column, 2));
     }
 
     public int timeToFly(Located other) {
         double dist = distance(other);
         return (int) Math.ceil(dist);
     }
+
     public void setLocation(Located location){
-        m_row = location.m_row;
-        m_column = location.m_column;
+        row = location.row;
+        column = location.column;
     }
 }

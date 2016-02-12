@@ -6,9 +6,7 @@ import hashcode.output.LoadAction;
 import hashcode.output.WaitAction;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.TreeMap;
 
 /**
  * Created by nikitakart on 11/02/16.
@@ -23,7 +21,6 @@ public class Task {
     public List<Warehouse> warehouses;
     public List<Order> orders;
     public List<Drone> drones;
-
     public List<IAction> actions = new ArrayList<>();
 
     public Task(int rows, int columns, int dronesCount, int deadline, int maxLoad, List<Integer> itemWeights,
@@ -38,11 +35,11 @@ public class Task {
         this.orders = orders;
         this.drones = new ArrayList<>();
         for (int i = 0; i < dronesCount; i++) {
-            this.drones.add(new Drone(warehouses.get(0).m_row, warehouses.get(0).m_column, this));
+            this.drones.add(new Drone(i, warehouses.get(0).row, warehouses.get(0).column, this));
         }
     }
 
-    public void deliver(int droneId, int orderId, int productTypeId, int itemsToDeliver) {
+    public void deliver(int droneId, int orderId, int productTypeId, int itemsToDeliver) throws DeadlineHit {
         Order order = orders.get(orderId);
         Drone drone = drones.get(droneId);
         int timeToCustomer = order.timeToFly(drone);
@@ -54,12 +51,12 @@ public class Task {
         actions.add(new DeliverAction(droneId, orderId, productTypeId, itemsToDeliver));
     }
 
-    public void wait(int droneId, int time) {
+    public void wait(int droneId, int time) throws DeadlineHit {
         drones.get(droneId).moveTime(time);
         actions.add(new WaitAction(droneId, time));
     }
 
-    public void load(int droneID, int wareHouseID, int itemType, int numberOfItem){
+    public void load(int droneID, int wareHouseID, int itemType, int numberOfItem) throws DeadlineHit {
         Drone drone = drones.get(droneID);
         Warehouse warehouse = warehouses.get(wareHouseID);
         int timeToWarehouse = drone.timeToFly(warehouse);
@@ -67,7 +64,7 @@ public class Task {
         drone.moveTime(timeToWarehouse + 1);
         drone.setLocation(warehouse);
         drone.load(itemType, numberOfItem);
-        warehouse.updateState(timeToWarehouse + 1, itemType, -numberOfItem);
+        warehouse.updateState(itemType, -numberOfItem);
         actions.add(new LoadAction(droneID, wareHouseID, itemType, numberOfItem));
     }
 }

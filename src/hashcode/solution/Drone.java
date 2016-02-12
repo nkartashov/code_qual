@@ -9,32 +9,26 @@ import java.util.Map;
  */
 public class Drone extends Located {
     private final Map<Integer, Integer> items = new HashMap<>(); // type, count
-
     private int currentLoad;
     private Task task;
 
-    public Drone(int row, int column, Task task) {
-        super(row, column);
+    public Drone(int id, int row, int column, Task task) {
+        super(id, row, column);
         currentLoad = 0;
         this.task = task;
     }
 
     private int time;
 
-    public Map<Integer, Integer> getItems() {
-        return items;
-    }
-
-    public int getTime() {
-        return time;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
-    }
-
-    public void moveTime(int time) {
+    public void moveTime(int time) throws DeadlineHit {
         this.time += time;
+        checkDeadline(this.time);
+    }
+
+    public void checkDeadline(int time) throws DeadlineHit {
+        if (time > task.deadline) {
+            throw new DeadlineHit();
+        }
     }
 
     public void deliver(int type, int count) {

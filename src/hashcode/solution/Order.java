@@ -7,19 +7,17 @@ import java.util.Map;
  * Created by nikitakart on 11/02/16.
  */
 public class Order extends Located implements Comparable<Order> {
-    private int totalItems;
+    private final Map<Integer, Integer> orderedItems;
+    private final int totalItems;
+    private int delivered;
+    private final double locality;
 
     public Map<Integer, Integer> getOrderedItems() {
         return orderedItems;
     }
 
-    private Map<Integer, Integer> orderedItems;
-    private int delivered;
-
-    private final double locality;
-
-    public Order(int row, int column, int totalItems, Map<Integer, Integer> orderedItems) {
-        super(row, column);
+    public Order(int id, int row, int column, int totalItems, Map<Integer, Integer> orderedItems) {
+        super(id, row, column);
         this.totalItems = totalItems;
         this.orderedItems = orderedItems;
         int maxItems = 0;
@@ -34,7 +32,7 @@ public class Order extends Located implements Comparable<Order> {
         delivered += count;
     }
 
-    public boolean isFullFilled() {
+    public boolean isFulfilled() {
         return delivered == totalItems;
     }
 

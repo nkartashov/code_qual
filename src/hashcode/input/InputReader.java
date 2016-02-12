@@ -45,7 +45,7 @@ public class InputReader {
                 for (String items: inputStream.readLine().split(" ")) {
                     itemsByType.add(Integer.parseInt(items));
                 }
-                warehouses.add(new Warehouse(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), itemsByType));
+                warehouses.add(new Warehouse(i, Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), itemsByType));
             }
 
             List<Order> orders = new ArrayList<>();
@@ -58,7 +58,7 @@ public class InputReader {
                     Integer iitem = Integer.parseInt(item);
                     orderedItems.put(iitem, orderedItems.getOrDefault(iitem, 0) + 1);
                 }
-                orders.add(new Order(Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), totalItems, orderedItems));
+                orders.add(new Order(i, Integer.parseInt(coords[0]), Integer.parseInt(coords[1]), totalItems, orderedItems));
             }
             return new Task(rows, columns, dronesCount, deadline, maxLoad, itemWeights, warehouses, orders);
         } catch (Exception ex) {
