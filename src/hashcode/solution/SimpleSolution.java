@@ -13,7 +13,7 @@ public class SimpleSolution implements ISolution {
 
     private void deliverItemWhere(Order order, int type, int count) throws DeadlineHit {
         while (count != 0) {
-            Warehouse warehouse = getWarehouseWithItem(type, count);
+            Warehouse warehouse = getWarehouseWithItem(order, type, count);
             int maxStored = warehouse.itemsForType(type);
             int toDeliver = Math.min(maxStored, count);
             deliverGoodsFromWarehouse(order, warehouse, type, toDeliver);
@@ -50,9 +50,10 @@ public class SimpleSolution implements ISolution {
         }
     }
 
-    Warehouse getWarehouseWithItem(int type, int count) {
+    Warehouse getWarehouseWithItem(Order order, int type, int count) {
         int max = -1;
         Warehouse bestWarehouse = null;
+        Collections.sort(task.warehouses, (o1, o2) -> o1.timeToFly(order) - o2.timeToFly(order));
         for (Warehouse warehouse: task.warehouses) {
             if (warehouse.itemsForType(type) > max) {
                 max = warehouse.itemsForType(type);

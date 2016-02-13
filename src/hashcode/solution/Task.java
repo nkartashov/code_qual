@@ -69,4 +69,9 @@ public class Task {
     public Drone getClosest(Warehouse warehouse) {
         return Collections.min(drones, (o1, o2) -> o1.timeTo(warehouse) - o2.timeTo(warehouse));
     }
+
+    public Warehouse bestWarehouseDeliveringItems(int type, int count) {
+
+        return null;
+    }
 }

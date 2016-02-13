@@ -13,7 +13,7 @@ public class Located extends IdObject {
         this.column = column;
     }
 
-    public double distance(Located other) {
+    private double distance(Located other) {
         return Math.sqrt(Math.pow(row - other.row, 2) + Math.pow(column - other.column, 2));
     }
 
